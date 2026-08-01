@@ -1,0 +1,390 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    /* Sky Blue Background Theme */
+    body {
+        background: linear-gradient(135deg, #87CEEB 0%, #B0E2FF 50%, #E6F7FF 100%);
+        min-height: 100vh;
+    }
+    
+    .professional-jumbotron {
+        background: linear-gradient(135deg, rgba(135, 206, 235, 0.95) 0%, rgba(176, 226, 255, 0.98) 100%);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 100, 200, 0.3),
+                    0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #2c3e50;
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stats-container {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    .stat-item {
+        padding: 15px;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .risk-high { color: #e74c3c; }
+    .risk-medium { color: #f39c12; }
+    .risk-low { color: #27ae60; }
+    
+    .feature-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .feature-icon {
+        font-size: 2rem;
+        color: #3498db;
+        margin-bottom: 15px;
+    }
+    
+    .card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.98) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-body {
+        color: #2c3e50;
+    }
+    
+    .welcome-highlight {
+        color: #2980b9;
+        font-weight: bold;
+    }
+    
+    .btn-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .btn-professional {
+        padding: 15px 20px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: white;
+    }
+    
+    .btn-primary-pro {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+    }
+    
+    .btn-success-pro {
+        background: linear-gradient(135deg, #27ae60, #229954);
+    }
+    
+    .btn-warning-pro {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+    }
+    
+    .btn-info-pro {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+    }
+    
+    .btn-professional:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white;
+    }
+    
+    .list-group-item {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(52, 152, 219, 0.2);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .list-group-item:hover {
+        background: rgba(52, 152, 219, 0.1);
+        transform: translateX(5px);
+    }
+    
+    .recommendation-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.9));
+        border-radius: 10px;
+        padding: 20px;
+        border: 1px solid rgba(52, 152, 219, 0.3);
+        transition: all 0.3s ease;
+        height: 100%;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .recommendation-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        border-color: rgba(52, 152, 219, 0.6);
+    }
+    
+    .risk-score-circle {
+        animation: pulse 2s infinite;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    /* Text colors for better readability */
+    h1, h2, h3, h4, h5, h6 {
+        color: #2c3e50;
+    }
+    
+    p, .text-muted {
+        color: #5d6d7e !important;
+    }
+    
+    .text-light {
+        color: #2c3e50 !important;
+    }
+</style>
+
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="row">
+  <div class="col-12">
+    <div class="professional-jumbotron p-5">
+      <div class="text-center mb-4">
+        <h1>Welcome, <span class="welcome-highlight">{{ user.first_name|default:user.username }}</span>! 👋</h1>
+        <p class="lead">Your mental wellness journey starts here. Choose your path below.</p>
+      </div>
+      
+      <div class="btn-grid">
+        <a href="{% url 'chat' %}" class="btn-professional btn-primary-pro">
+          <i class="fas fa-robot"></i>
+          AI Chatbot
+        </a>
+        <a href="{% url 'chat_history' %}" class="btn-professional btn-success-pro">
+          <i class="fas fa-history"></i>
+          Chat History
+        </a>
+        <a href="{% url 'weekly_report' %}" class="btn-professional btn-warning-pro">
+          <i class="fas fa-chart-bar"></i>
+          Weekly Reports
+        </a>
+        <a href="#" class="btn-professional btn-info-pro">
+          <i class="fas fa-brain"></i>
+          ML Analysis
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Real Stats Section -->
+<div class="stats-container">
+  <div class="row text-center">
+    <div class="col-md-3 col-6 stat-item">
+      <div class="stat-number">{{ total_chats }}</div>
+      <div class="stat-label">Total Chats</div>
+    </div>
+    <div class="col-md-3 col-6 stat-item">
+      <div class="stat-number">{{ recent_chats_count }}</div>
+      <div class="stat-label">This Week</div>
+    </div>
+    <div class="col-md-3 col-6 stat-item">
+      <div class="stat-number">{{ sentiment_data.positive }}%</div>
+      <div class="stat-label">Positive Mood</div>
+    </div>
+    <div class="col-md-3 col-6 stat-item">
+      <div class="stat-number 
+          {% if risk_data.category == 'high' %}risk-high
+          {% elif risk_data.category == 'medium' %}risk-medium
+          {% else %}risk-low
+          {% endif %}">
+        {{ risk_data.level }}/10
+      </div>
+      <div class="stat-label">Risk Level</div>
+    </div>
+  </div>
+</div>
+
+<!-- Real ML-Powered Mental Health Insights -->
+<div class="row mt-5">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-4"><i class="fas fa-brain me-2 text-primary"></i>Real-time Mental Health Insights</h4>
+        
+        <div class="row">
+          <!-- Real Emotion Trends -->
+          <div class="col-md-6 mb-4">
+            <div class="feature-card p-4">
+              <div class="feature-icon text-primary">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h5>Emotion Analysis</h5>
+              <p>Based on {{ recent_chats_count }} recent conversations</p>
+              <div id="emotion-trends" class="mt-3">
+                <div class="progress mb-2" style="height: 12px; background: rgba(52, 152, 219, 0.2); border-radius: 10px;">
+                  <div class="progress-bar bg-success" style="width: {{ sentiment_data.positive }}%; border-radius: 10px;"></div>
+                </div>
+                <small>Positive: {{ sentiment_data.positive }}%</small>
+                
+                <div class="progress mb-2" style="height: 12px; background: rgba(52, 152, 219, 0.2); border-radius: 10px;">
+                  <div class="progress-bar bg-info" style="width: {{ sentiment_data.neutral }}%; border-radius: 10px;"></div>
+                </div>
+                <small>Neutral: {{ sentiment_data.neutral }}%</small>
+                
+                <div class="progress mb-2" style="height: 12px; background: rgba(52, 152, 219, 0.2); border-radius: 10px;">
+                  <div class="progress-bar bg-warning" style="width: {{ sentiment_data.negative }}%; border-radius: 10px;"></div>
+                </div>
+                <small>Negative: {{ sentiment_data.negative }}%</small>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Real Risk Assessment -->
+          <div class="col-md-6 mb-4">
+            <div class="feature-card p-4">
+              <div class="feature-icon text-primary">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <h5>Risk Assessment</h5>
+              <p>AI-powered analysis of your mental health patterns</p>
+              <div id="risk-metrics" class="mt-3 text-center">
+                {% if risk_data.category == 'high' %}
+                <div class="risk-score-circle mx-auto mb-3" style="width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(#e74c3c 0% 100%); display: flex; align-items: center; justify-content: center;">
+                  <div style="width: 70px; height: 70px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <span class="text-danger fw-bold">High</span>
+                  </div>
+                </div>
+                {% elif risk_data.category == 'medium' %}
+                <div class="risk-score-circle mx-auto mb-3" style="width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(#f39c12 0% 100%); display: flex; align-items: center; justify-content: center;">
+                  <div style="width: 70px; height: 70px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <span class="text-warning fw-bold">Medium</span>
+                  </div>
+                </div>
+                {% else %}
+                <div class="risk-score-circle mx-auto mb-3" style="width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(#27ae60 0% 100%); display: flex; align-items: center; justify-content: center;">
+                  <div style="width: 70px; height: 70px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <span class="text-success fw-bold">Low</span>
+                  </div>
+                </div>
+                {% endif %}
+                <small class="text-muted">Risk Level: {{ risk_data.level }}/10</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+
+        <!-- Real-time Recommendations -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="feature-card p-4">
+              <div class="feature-icon text-primary">
+                <i class="fas fa-robot"></i>
+              </div>
+              <h5>Personalized Recommendations</h5>
+              <p>Based on your chat patterns and emotional trends</p>
+              
+              <div class="row mt-3">
+                <div class="col-md-4 mb-3">
+                  <div class="recommendation-card">
+                    <div class="d-flex align-items-center mb-2">
+                      <div class="me-3" style="font-size: 2rem;">🌬️</div>
+                      <h6 class="mb-0 text-primary">Breathing Exercise</h6>
+                    </div>
+                    <p class="text-muted small mb-3">5-minute guided breathing to reduce stress</p>
+                    <button class="btn btn-sm btn-outline-primary w-100" onclick="startExercise('breathing')">Try Now</button>
+                  </div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                  <div class="recommendation-card">
+                    <div class="d-flex align-items-center mb-2">
+                      <div class="me-3" style="font-size: 2rem;">📝</div>
+                      <h6 class="mb-0 text-primary">Journal Prompt</h6>
+                    </div>
+                    <p class="text-muted small mb-3">"What made you feel grateful today?"</p>
+                    <button class="btn btn-sm btn-outline-success w-100" onclick="startJournal()">Start Writing</button>
+                  </div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                  <div class="recommendation-card">
+                    <div class="d-flex align-items-center mb-2">
+                      <div class="me-3" style="font-size: 2rem;">🎯</div>
+                      <h6 class="mb-0 text-primary">Weekly Goal</h6>
+                    </div>
+                    <p class="text-muted small mb-3">Practice mindfulness for 5 minutes daily</p>
+                    <button class="btn btn-sm btn-outline-info w-100" onclick="setGoal()">Set Goal</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Real-time functionality
+function startExercise(type) {
+    alert(`Starting ${type} exercise... This would launch a guided session in a real app.`);
+}
+
+function startJournal() {
+    window.location.href = "{% url 'chat' %}?mode=journal";
+}
+
+function setGoal() {
+    alert("Goal setting feature would open here in a complete implementation.");
+}
+
+// Auto-refresh dashboard every 30 seconds
+setTimeout(() => {
+    window.location.reload();
+}, 30000);
+</script>
+{% endblock %}

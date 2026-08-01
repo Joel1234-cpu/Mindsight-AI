@@ -1,0 +1,94 @@
+{
+  "training_data": [
+    {
+      "text": "I feel empty inside",
+      "intent": "feeling_sad",
+      "emotions": ["sadness", "emptiness"],
+      "risk_level": 6
+    },
+    {
+      "text": "Hello, nice to meet you",
+      "intent": "greeting",
+      "emotions": ["neutral"],
+      "risk_level": 1
+    },
+    {
+      "text": "I'm constantly worrying",
+      "intent": "feeling_anxious",
+      "emotions": ["anxiety", "worry"],
+      "risk_level": 5
+    },
+    {
+      "text": "I want to kill myself",
+      "intent": "crisis",
+      "emotions": ["despair", "hopelessness"],
+      "risk_level": 10
+    },
+    {
+      "text": "Thanks a lot for your help",
+      "intent": "gratitude",
+      "emotions": ["gratitude"],
+      "risk_level": 1
+    },
+    {
+      "text": "I'm furious about what happened",
+      "intent": "feeling_angry",
+      "emotions": ["anger", "frustration"],
+      "risk_level": 6
+    },
+    {
+      "text": "I feel so isolated from everyone",
+      "intent": "feeling_lonely",
+      "emotions": ["loneliness", "isolation"],
+      "risk_level": 5
+    },
+    {
+      "text": "I'm overwhelmed with responsibilities",
+      "intent": "stress",
+      "emotions": ["overwhelm", "stress"],
+      "risk_level": 6
+    },
+    {
+      "text": "Bye, take care",
+      "intent": "goodbye",
+      "emotions": ["neutral"],
+      "risk_level": 1
+    },
+    {
+      "text": "Can you help me with my anxiety?",
+      "intent": "general_support",
+      "emotions": ["anxiety", "uncertainty"],
+      "risk_level": 4
+    },
+    {
+      "text": "I'm feeling optimistic today",
+      "intent": "positive_feelings",
+      "emotions": ["optimism", "hope"],
+      "risk_level": 1
+    },
+    {
+      "text": "My heart is racing and I can't breathe",
+      "intent": "feeling_anxious",
+      "emotions": ["panic", "fear"],
+      "risk_level": 7
+    },
+    {
+      "text": "I've lost interest in everything",
+      "intent": "feeling_sad",
+      "emotions": ["apathy", "depression"],
+      "risk_level": 7
+    },
+    {
+      "text": "I'm so irritated with everyone",
+      "intent": "feeling_angry",
+      "emotions": ["irritation", "anger"],
+      "risk_level": 4
+    },
+    {
+      "text": "I have nobody to share my feelings with",
+      "intent": "feeling_lonely",
+      "emotions": ["loneliness", "sadness"],
+      "risk_level": 5
+    }
+  ]
+}

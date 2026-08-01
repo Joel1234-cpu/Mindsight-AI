@@ -1,0 +1,577 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    /* ML Analysis Styles - Light Blue Theme */
+    .ml-results-panel {
+        background: linear-gradient(135deg, rgba(173, 216, 230, 0.95) 0%, rgba(176, 224, 230, 0.98) 100%);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 15px 0;
+        border: 1px solid rgba(70, 130, 180, 0.3);
+        box-shadow: 0 8px 32px rgba(135, 206, 235, 0.4);
+    }
+
+    .emotion-indicator {
+        background: rgba(240, 248, 255, 0.8);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px 0;
+        border: 1px solid rgba(70, 130, 180, 0.2);
+    }
+
+    .dominant-emotion {
+        background: linear-gradient(135deg, #4682B4, #5F9EA0);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 15px rgba(70, 130, 180, 0.3);
+    }
+
+    .emotion-bar {
+        display: flex;
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+        background: rgba(240, 248, 255, 0.6);
+        margin: 10px 0;
+    }
+
+    .emotion-item {
+        height: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .emotion-item:hover {
+        transform: scaleY(1.5);
+    }
+
+    .risk-indicator {
+        padding: 12px;
+        border-radius: 10px;
+        margin: 10px 0;
+        text-align: center;
+        font-weight: 600;
+        border: 1px solid;
+        background: rgba(240, 248, 255, 0.8);
+    }
+
+    .risk-low {
+        background: rgba(144, 238, 144, 0.3);
+        border-color: rgba(0, 128, 0, 0.3);
+        color: #2E8B57;
+    }
+
+    .risk-medium {
+        background: rgba(255, 215, 0, 0.3);
+        border-color: rgba(255, 140, 0, 0.3);
+        color: #FF8C00;
+    }
+
+    .risk-high {
+        background: rgba(255, 182, 193, 0.3);
+        border-color: rgba(255, 0, 0, 0.3);
+        color: #DC143C;
+        animation: pulse 2s infinite;
+    }
+
+    .recommendation-card {
+        background: rgba(240, 248, 255, 0.8);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px 0;
+        border: 1px solid rgba(70, 130, 180, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .recommendation-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 130, 180, 0.3);
+        border-color: rgba(30, 144, 255, 0.4);
+    }
+
+    .emergency-alert {
+        background: linear-gradient(135deg, rgba(255, 182, 193, 0.2) 0%, rgba(255, 192, 203, 0.1) 100%);
+        border: 2px solid rgba(220, 20, 60, 0.5);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 15px 0;
+        color: #DC143C;
+        animation: emergencyPulse 1.5s infinite;
+    }
+
+    .chat-message-user {
+        background: linear-gradient(135deg, #4682B4, #5F9EA0);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 18px 18px 4px 18px;
+        margin: 8px 0;
+        max-width: 80%;
+        margin-left: auto;
+        box-shadow: 0 4px 15px rgba(70, 130, 180, 0.3);
+    }
+
+    .chat-message-bot {
+        background: rgba(240, 248, 255, 0.9);
+        color: #2F4F4F;
+        padding: 12px 16px;
+        border-radius: 18px 18px 18px 4px;
+        margin: 8px 0;
+        max-width: 80%;
+        border: 1px solid rgba(70, 130, 180, 0.2);
+        box-shadow: 0 4px 15px rgba(135, 206, 235, 0.3);
+    }
+
+    .typing-indicator {
+        display: inline-flex;
+        padding: 12px 16px;
+        background: rgba(240, 248, 255, 0.8);
+        border-radius: 18px;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: #4682B4;
+        border-radius: 50%;
+        animation: typingAnimation 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    /* Main Chat Container */
+    .card {
+        background: linear-gradient(135deg, rgba(173, 216, 230, 0.95) 0%, rgba(176, 224, 230, 0.98) 100%) !important;
+        border: 1px solid rgba(70, 130, 180, 0.3) !important;
+    }
+
+    /* Chat Window Background */
+    #chat-window {
+        background: rgba(240, 248, 255, 0.7) !important;
+        border-radius: 10px;
+    }
+
+    /* Input Field */
+    #chat-input {
+        background: rgba(240, 248, 255, 0.9) !important;
+        border: 1px solid rgba(70, 130, 180, 0.3) !important;
+        color: #2F4F4F !important;
+    }
+
+    #chat-input::placeholder {
+        color: #708090 !important;
+    }
+
+    /* Send Button */
+    #send-btn {
+        background: linear-gradient(135deg, #4682B4, #5F9EA0) !important;
+        border: none !important;
+    }
+
+    /* Quick Tips Card */
+    .card.mt-3 {
+        background: linear-gradient(135deg, rgba(173, 216, 230, 0.9) 0%, rgba(176, 224, 230, 0.95) 100%) !important;
+        border: 1px solid rgba(70, 130, 180, 0.3) !important;
+    }
+
+    /* Text Colors for Light Theme */
+    .text-light {
+        color: #2F4F4F !important;
+    }
+
+    .text-muted {
+        color: #708090 !important;
+    }
+
+    .text-info {
+        color: #4682B4 !important;
+    }
+
+    .text-warning {
+        color: #FF8C00 !important;
+    }
+
+    .text-success {
+        color: #2E8B57 !important;
+    }
+
+    .text-danger {
+        color: #DC143C !important;
+    }
+
+    /* Badge */
+    .badge.bg-success {
+        background: linear-gradient(135deg, #2E8B57, #3CB371) !important;
+    }
+
+    /* Emergency Contacts Background */
+    .bg-dark {
+        background: rgba(240, 248, 255, 0.9) !important;
+    }
+
+    @keyframes typingAnimation {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(220, 20, 60, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(220, 20, 60, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(220, 20, 60, 0); }
+    }
+
+    @keyframes emergencyPulse {
+        0% { border-color: rgba(220, 20, 60, 0.5); }
+        50% { border-color: rgba(220, 20, 60, 0.8); }
+        100% { border-color: rgba(220, 20, 60, 0.5); }
+    }
+</style>
+
+<div class="row">
+  <!-- Chat Window -->
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-body d-flex flex-column" style="height:70vh;">
+        <!-- ML Results Header -->
+        <div id="ml-header" class="mb-3" style="display: none;">
+          <div class="d-flex align-items-center justify-content-between">
+            <h6 class="text-light mb-0"><i class="fas fa-brain me-2"></i>AI Analysis Active</h6>
+            <span class="badge bg-success">Real-time</span>
+          </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div id="chat-window" class="flex-grow-1 overflow-auto mb-3 p-3">
+          {% for chat in chat_history %}
+            {% if chat.user_message %}
+              <div class="text-end mb-2">
+                <div class="chat-message-user">{{ chat.user_message }}</div>
+              </div>
+            {% endif %}
+            {% if chat.bot_response %}
+              <div class="text-start mb-2">
+                <div class="chat-message-bot">{{ chat.bot_response }}</div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        
+        <!-- Chat Input -->
+        <form id="chat-form" class="d-flex gap-2">
+          {% csrf_token %}
+          <input id="chat-input" class="form-control" placeholder="Share your thoughts... I'm here to listen and help...">
+          <button id="send-btn" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ML Analysis Sidebar -->
+  <div class="col-md-4">
+    <!-- Real-time Analysis Panel -->
+    <div class="ml-results-panel">
+      <h5 class="text-light mb-3"><i class="fas fa-brain me-2"></i>AI Analysis</h5>
+      
+      <!-- Emotion Analysis -->
+      <div id="emotion-analysis" class="emotion-indicator">
+        <div class="text-center mb-2">
+          <span class="dominant-emotion">Neutral</span>
+        </div>
+        <div class="emotion-bar" id="emotion-visualization">
+          <!-- Emotion bars will be dynamically added here -->
+        </div>
+        <small class="text-muted">Real-time emotion detection</small>
+      </div>
+      
+      <!-- Risk Assessment -->
+      <div id="risk-assessment" class="risk-indicator risk-low">
+        <i class="fas fa-shield-alt me-2"></i>
+        <span id="risk-text">Low Risk Detected</span>
+      </div>
+      
+      <!-- Recommendations -->
+      <div id="recommendations-panel">
+        <h6 class="text-light mb-3">Recommended Exercises</h6>
+        <div class="text-center text-muted">
+          <small>Start chatting to get personalized recommendations</small>
+        </div>
+      </div>
+      
+      <!-- Emergency Resources (Hidden by default) -->
+      <div id="emergency-resources" class="emergency-alert" style="display: none;">
+        <h6 class="mb-3"><i class="fas fa-exclamation-triangle me-2"></i>Important Resources</h6>
+        <div id="emergency-contacts">
+          <!-- Emergency contacts will be added here -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Tips -->
+    <div class="card mt-3">
+      <div class="card-body">
+        <h6 class="text-light"><i class="fas fa-lightbulb me-2"></i>Tips for Better Results</h6>
+        <ul class="list-unstyled text-muted small mt-3">
+          <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Be open and honest about your feelings</li>
+          <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Describe specific situations that bother you</li>
+          <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Mention physical sensations you experience</li>
+          <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Share both positive and negative experiences</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ML Analysis Functions
+async function analyzeMessageWithML(message) {
+    try {
+        const response = await fetch('/api/analyze/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken(),
+            },
+            body: JSON.stringify({
+                message: message,
+                user_id: '{{ user.id }}'
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.ml_available !== false) {
+            displayMLResults(result);
+            updateRiskIndicator(result.risk_assessment);
+            showRecommendations(result.recommendations);
+            handleEmergencyResources(result.emergency_resources);
+        }
+        
+        return result;
+    } catch (error) {
+        console.error('ML Analysis failed:', error);
+        return null;
+    }
+}
+
+function displayMLResults(result) {
+    // Show ML header
+    document.getElementById('ml-header').style.display = 'block';
+    
+    // Update dominant emotion
+    const dominantEmotion = document.querySelector('.dominant-emotion');
+    dominantEmotion.textContent = result.analysis.dominant_emotion.charAt(0).toUpperCase() + 
+                                 result.analysis.dominant_emotion.slice(1);
+    
+    // Update emotion visualization
+    const emotionBar = document.getElementById('emotion-visualization');
+    emotionBar.innerHTML = '';
+    
+    Object.entries(result.analysis.emotions).forEach(([emotion, score]) => {
+        const emotionItem = document.createElement('div');
+        emotionItem.className = 'emotion-item';
+        emotionItem.style.width = `${score * 100}%`;
+        emotionItem.style.background = getEmotionColor(emotion);
+        emotionItem.setAttribute('data-emotion', `${emotion}: ${Math.round(score * 100)}%`);
+        emotionBar.appendChild(emotionItem);
+    });
+}
+
+function getEmotionColor(emotion) {
+    const colors = {
+        joy: 'linear-gradient(90deg, #FFD700, #FFEC8B)',
+        sadness: 'linear-gradient(90deg, #4682B4, #87CEEB)',
+        anger: 'linear-gradient(90deg, #FF6347, #FF7F50)',
+        fear: 'linear-gradient(90deg, #9370DB, #BA55D3)',
+        surprise: 'linear-gradient(90deg, #32CD32, #00FA9A)',
+        neutral: 'linear-gradient(90deg, #B0C4DE, #D3D3D3)',
+        optimism: 'linear-gradient(90deg, #FFA500, #FFD700)',
+        curiosity: 'linear-gradient(90deg, #20B2AA, #40E0D0)',
+        calm: 'linear-gradient(90deg, #1E90FF, #87CEFA)'
+    };
+    return colors[emotion] || 'linear-gradient(90deg, #778899, #B0C4DE)';
+}
+
+function updateRiskIndicator(riskData) {
+    const riskElement = document.getElementById('risk-assessment');
+    const riskText = document.getElementById('risk-text');
+    
+    riskElement.className = 'risk-indicator';
+    
+    if (riskData.risk_category === 'high') {
+        riskElement.classList.add('risk-high');
+        riskText.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>High Risk - Please Seek Help`;
+    } else if (riskData.risk_category === 'medium') {
+        riskElement.classList.add('risk-medium');
+        riskText.innerHTML = `<i class="fas fa-info-circle me-2"></i>Medium Risk - Monitor Closely`;
+    } else {
+        riskElement.classList.add('risk-low');
+        riskText.innerHTML = `<i class="fas fa-check-circle me-2"></i>Low Risk - You're Doing Well`;
+    }
+}
+
+function showRecommendations(recommendations) {
+    const recommendationsPanel = document.getElementById('recommendations-panel');
+    
+    if (recommendations && recommendations.length > 0) {
+        recommendationsPanel.innerHTML = '<h6 class="text-light mb-3">Recommended Exercises</h6>';
+        
+        recommendations.forEach(rec => {
+            const recCard = document.createElement('div');
+            recCard.className = 'recommendation-card';
+            recCard.innerHTML = `
+                <div class="d-flex align-items-start">
+                    <div class="me-3" style="font-size: 1.2rem;">${rec.icon || '💡'}</div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-light mb-1">${rec.title}</h6>
+                        <p class="text-muted small mb-2">${rec.description}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-info">${rec.duration} min</small>
+                            <small class="text-warning">${rec.difficulty || 'Beginner'}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+            recommendationsPanel.appendChild(recCard);
+        });
+    }
+}
+
+function handleEmergencyResources(emergencyData) {
+    const emergencyPanel = document.getElementById('emergency-resources');
+    const emergencyContacts = document.getElementById('emergency-contacts');
+    
+    if (emergencyData) {
+        emergencyPanel.style.display = 'block';
+        emergencyContacts.innerHTML = '';
+        
+        if (emergencyData.emergency) {
+            emergencyContacts.innerHTML = `
+                <p class="small mb-3">${emergencyData.message}</p>
+                ${emergencyData.resources.map(resource => `
+                    <div class="mb-2 p-2 bg-dark rounded">
+                        <strong class="text-warning">${resource.name}</strong><br>
+                        <span class="text-light">${resource.number}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+    } else {
+        emergencyPanel.style.display = 'none';
+    }
+}
+
+// Enhanced Chat Form Handler
+document.getElementById('chat-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const input = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const chatWindow = document.getElementById('chat-window');
+    const text = input.value.trim();
+    
+    if(!text) return;
+    
+    // Add user message to UI
+    const userDiv = document.createElement('div');
+    userDiv.className = 'text-end mb-2';
+    userDiv.innerHTML = `<div class="chat-message-user">${text}</div>`;
+    chatWindow.appendChild(userDiv);
+    input.value = '';
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    // Show typing indicator
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'text-start mb-2';
+    typingDiv.innerHTML = `
+        <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+    chatWindow.appendChild(typingDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    // Disable UI
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    input.disabled = true;
+    
+    try {
+        // Analyze message with ML
+        const mlResult = await analyzeMessageWithML(text);
+        
+        // Send message to server
+        const response = await fetch('{% url "chat_message" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: `message=${encodeURIComponent(text)}`
+        });
+
+        const data = await response.json();
+        
+        // Remove typing indicator
+        typingDiv.remove();
+        
+        if(response.ok && data.success) {
+            // Add bot response to UI
+            const botDiv = document.createElement('div');
+            botDiv.className = 'text-start mb-2';
+            botDiv.innerHTML = `<div class="chat-message-bot">${data.response}</div>`;
+            chatWindow.appendChild(botDiv);
+        } else {
+            // Show error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'text-center mb-2';
+            errorDiv.innerHTML = `<div class="chat-message-bot text-danger">${data.error || 'An error occurred. Please try again.'}</div>`;
+            chatWindow.appendChild(errorDiv);
+        }
+    } catch(err) {
+        console.error('Error:', err);
+        // Remove typing indicator
+        typingDiv.remove();
+        
+        // Show error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'text-center mb-2';
+        errorDiv.innerHTML = `<div class="chat-message-bot text-danger">Network error. Please check your connection and try again.</div>`;
+        chatWindow.appendChild(errorDiv);
+    } finally {
+        // Reset UI state
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        input.disabled = false;
+        input.focus();
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+});
+
+// CSRF Token Helper
+function getCsrfToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+// Auto-scroll to bottom
+function scrollToBottom() {
+    const chatWindow = document.getElementById('chat-window');
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    scrollToBottom();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{
+  "crisis_keywords": {
+    "immediate_risk": [
+      "kill myself",
+      "suicide",
+      "end my life",
+      "want to die",
+      "harm myself",
+      "ending it all",
+      "don't want to live",
+      "better off dead",
+      "planning suicide",
+      "suicide method"
+    ],
+    "high_risk": [
+      "no reason to live",
+      "hopeless",
+      "can't go on",
+      "tired of living",
+      "nothing matters",
+      "burden to everyone",
+      "world without me",
+      "give up completely",
+      "no way out",
+      "unbearable pain"
+    ],
+    "medium_risk": [
+      "want to disappear",
+      "can't take it anymore",
+      "life is pointless",
+      "why bother",
+      "nobody would miss me",
+      "feel like dying",
+      "wish I was dead",
+      "end this pain",
+      "can't cope anymore",
+      "breaking point"
+    ]
+  },
+  "emotion_keywords": {
+    "sadness": [
+      "sad", "depressed", "unhappy", "miserable", "hopeless",
+      "empty", "tearful", "crying", "down", "blue",
+      "grief", "heartbroken", "devastated", "despair"
+    ],
+    "anxiety": [
+      "anxious", "nervous", "worried", "panicked", "scared",
+      "fear", "terrified", "overwhelmed", "stressed", "tense",
+      "racing thoughts", "can't relax", "on edge", "apprehensive"
+    ],
+    "anger": [
+      "angry", "mad", "furious", "irritated", "frustrated",
+      "annoyed", "rage", "resentful", "bitter", "hostile",
+      "livid", "outraged", "infuriated", "pissed off"
+    ],
+    "loneliness": [
+      "lonely", "alone", "isolated", "abandoned", "empty",
+      "detached", "disconnected", "unloved", "rejected", "separated",
+      "solitary", "withdrawn", "friendless", "forsaken"
+    ]
+  }
+}

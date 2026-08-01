@@ -1,0 +1,475 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    /* Remove body background - it's hiding the navbar */
+    /* Only style the content area */
+    .content-background {
+        background: linear-gradient(135deg, #87CEEB 0%, #B0E2FF 50%, #E6F7FF 100%);
+        min-height: calc(100vh - 76px); /* Subtract navbar height */
+        padding: 20px 0;
+    }
+    
+    .container {
+        max-width: 1200px;
+    }
+    
+    .card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    
+    .chat-header {
+        background: linear-gradient(135deg, rgba(135, 206, 235, 0.9), rgba(176, 226, 255, 0.9));
+        border-radius: 16px 16px 0 0;
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    .user-message {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        border-radius: 18px 18px 5px 18px;
+        padding: 12px 16px;
+        margin: 8px 0;
+        max-width: 70%;
+        margin-left: auto;
+        box-shadow: 0 2px 10px rgba(52, 152, 219, 0.3);
+        position: relative;
+    }
+    
+    .bot-message {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        color: #2c3e50;
+        border-radius: 18px 18px 18px 5px;
+        padding: 12px 16px;
+        margin: 8px 0;
+        max-width: 70%;
+        border: 1px solid rgba(52, 152, 219, 0.2);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .message-time {
+        font-size: 0.75rem;
+        color: #7f8c8d;
+        margin: 5px 0;
+    }
+    
+    .sentiment-badge {
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+        margin-left: 10px;
+    }
+    
+    .sentiment-positive {
+        background: #27ae60;
+        color: white;
+    }
+    
+    .sentiment-negative {
+        background: #e74c3c;
+        color: white;
+    }
+    
+    .sentiment-neutral {
+        background: #95a5a6;
+        color: white;
+    }
+    
+    .risk-badge {
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+        margin-left: 5px;
+    }
+    
+    .risk-high {
+        background: #e74c3c;
+        color: white;
+    }
+    
+    .risk-medium {
+        background: #f39c12;
+        color: white;
+    }
+    
+    .risk-low {
+        background: #27ae60;
+        color: white;
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.9));
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(52, 152, 219, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #7f8c8d;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #bdc3c7;
+        margin-bottom: 20px;
+    }
+    
+    .chat-container {
+        max-height: 600px;
+        overflow-y: auto;
+        padding: 20px;
+    }
+    
+    /* Delete button styles - MAKE SURE THESE ARE VISIBLE */
+    .delete-btn {
+        background: rgba(231, 76, 60, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        color: white;
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        opacity: 0.7;
+        z-index: 10;
+    }
+    
+    .delete-btn:hover {
+        background: #c0392b;
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    
+    .user-message:hover .delete-btn {
+        opacity: 1;
+    }
+    
+    /* Message group styling */
+    .message-group {
+        margin-bottom: 25px;
+        padding: 15px;
+        border-radius: 12px;
+        background: rgba(248, 249, 250, 0.5);
+        border: 1px solid rgba(52, 152, 219, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .message-group:hover {
+        background: rgba(248, 249, 250, 0.8);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Scrollbar styling */
+    .chat-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .chat-container::-webkit-scrollbar-track {
+        background: rgba(52, 152, 219, 0.1);
+        border-radius: 3px;
+    }
+    
+    .chat-container::-webkit-scrollbar-thumb {
+        background: #3498db;
+        border-radius: 3px;
+    }
+</style>
+
+<!-- Wrap your content in a div with background -->
+<div class="content-background">
+    <div class="container mt-4">
+        <!-- Messages Alerts -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Debug Alert (remove after testing) -->
+        <div class="alert alert-info alert-dismissible fade show mb-3">
+            <strong>Authentication Status:</strong> 
+            User: {{ user.username }} | 
+            Authenticated: {{ user.is_authenticated }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Header Section -->
+        <div class="card">
+            <div class="chat-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 class="mb-1 text-dark">
+                            <i class="fas fa-history me-2"></i>Chat History
+                        </h3>
+                        <p class="mb-0 text-dark">Your conversations with MindSight AI</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        {% if recent_chats %}
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#clearHistoryModal">
+                            <i class="fas fa-trash me-1"></i>Clear All History
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistics Section -->
+            {% if recent_chats %}
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3 col-6">
+                        <div class="stats-card">
+                            <div class="stat-number">{{ total_chats }}</div>
+                            <div class="stat-label">Total Messages</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stats-card">
+                            <div class="stat-number">{{ avg_sentiment|floatformat:2 }}</div>
+                            <div class="stat-label">Avg Sentiment</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stats-card">
+                            <div class="stat-number">{{ avg_risk|floatformat:1 }}</div>
+                            <div class="stat-label">Avg Risk Level</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stats-card">
+                            <div class="stat-number">{{ recent_chats.count }}</div>
+                            <div class="stat-label">Displayed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Chat Messages Section -->
+        <div class="card">
+            <div class="chat-container">
+                {% if recent_chats %}
+                    {% for chat in recent_chats %}
+                    <div class="message-group" id="message-{{ chat.id }}">
+                        <!-- User Message -->
+                        <div class="text-end mb-3">
+                            <div class="message-time">
+                                {{ chat.timestamp|date:"M d, Y H:i" }}
+                                {% if chat.sentiment_score %}
+                                    <span class="sentiment-badge 
+                                        {% if chat.sentiment_score > 0.3 %}sentiment-positive
+                                        {% elif chat.sentiment_score < -0.3 %}sentiment-negative
+                                        {% else %}sentiment-neutral
+                                        {% endif %}">
+                                        {{ chat.get_sentiment_label }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="user-message">
+                                <!-- INDIVIDUAL DELETE BUTTON - This should be visible -->
+                                <button class="delete-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#deleteMessageModal"
+                                        data-message-id="{{ chat.id }}"
+                                        title="Delete this message">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                {{ chat.user_message }}
+                            </div>
+                        </div>
+                        
+                        <!-- Bot Response -->
+                        <div class="text-start mb-3">
+                            <div class="bot-message">
+                                {{ chat.bot_response }}
+                            </div>
+                            <div class="message-time">
+                                {{ chat.timestamp|date:"M d, Y H:i" }}
+                                {% if chat.risk_level %}
+                                    <span class="risk-badge 
+                                        {% if chat.risk_level >= 7 %}risk-high
+                                        {% elif chat.risk_level >= 4 %}risk-medium
+                                        {% else %}risk-low
+                                        {% endif %}">
+                                        Risk: {{ chat.get_risk_category }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Empty State -->
+                    <div class="empty-state">
+                        <i class="fas fa-robot"></i>
+                        <h4 class="text-muted">No Chat History Yet</h4>
+                        <p class="text-muted mb-4">Start a conversation with MindSight AI to see your chat history here.</p>
+                        <a href="{% url 'chat' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-robot me-2"></i>Start Chatting
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Single Message Modal -->
+<div class="modal fade" id="deleteMessageModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Delete Message
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-dark">Are you sure you want to delete this message?</p>
+                <p class="text-muted small">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </button>
+                <form id="deleteMessageForm" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Delete Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clear All History Modal -->
+<div class="modal fade" id="clearHistoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Clear All Chat History
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-dark">Are you sure you want to clear your entire chat history?</p>
+                <p class="text-muted small">This action cannot be undone and will permanently delete all your conversation data.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </button>
+                <form action="{% url 'clear_history' %}" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Clear All History
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-scroll to bottom of chat container
+    const chatContainer = document.querySelector('.chat-container');
+    if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // Add smooth animations
+    const messageGroups = document.querySelectorAll('.message-group');
+    messageGroups.forEach((group, index) => {
+        group.style.opacity = '0';
+        group.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            group.style.transition = 'all 0.5s ease';
+            group.style.opacity = '1';
+            group.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+
+    // Handle delete message modal
+    const deleteMessageModal = document.getElementById('deleteMessageModal');
+    if (deleteMessageModal) {
+        deleteMessageModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const messageId = button.getAttribute('data-message-id');
+            console.log("Deleting message ID:", messageId);
+            
+            // Update form action
+            const form = document.getElementById('deleteMessageForm');
+            form.action = "{% url 'delete_message' 0 %}".replace('0', messageId);
+            console.log("Form action set to:", form.action);
+        });
+    }
+
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 5000);
+
+    // Add hover effects for message groups
+    messageGroups.forEach(group => {
+        group.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        
+        group.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Debug: Check if delete buttons are present
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    console.log(`Found ${deleteButtons.length} delete buttons`);
+    deleteButtons.forEach((btn, index) => {
+        console.log(`Delete button ${index + 1}:`, btn);
+    });
+});
+</script>
+{% endblock %}

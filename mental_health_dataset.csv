@@ -1,0 +1,31 @@
+text,label,emotion,risk_level
+"I feel so sad and hopeless today",feeling_sad,sadness,7
+"Hello, how are you doing?",greeting,neutral,1
+"I'm feeling extremely anxious about my future",feeling_anxious,anxiety,6
+"I want to end my life",crisis,despair,10
+"Thank you for listening to me",gratitude,gratitude,1
+"I'm so angry I can't think straight",feeling_angry,anger,5
+"I feel completely alone in this world",feeling_lonely,loneliness,6
+"The stress is too much to handle",stress,stress,7
+"Goodbye, talk to you later",goodbye,neutral,1
+"I need someone to help me",general_support,anxiety,4
+"I'm feeling really happy today",positive_feelings,joy,1
+"I can't stop worrying about everything",feeling_anxious,anxiety,6
+"Nothing brings me joy anymore",feeling_sad,depression,8
+"I'm so frustrated with this situation",feeling_angry,frustration,4
+"Nobody understands what I'm going through",feeling_lonely,loneliness,5
+"The pressure at work is overwhelming",stress,overwhelm,6
+"Hi there, I need someone to talk to",greeting,neutral,2
+"Thanks for your support",gratitude,gratitude,1
+"I'm thinking about suicide",crisis,despair,10
+"I feel much better today",positive_feelings,hope,2
+"My anxiety is through the roof",feeling_anxious,panic,7
+"I'm crying all the time",feeling_sad,sadness,6
+"I'm so mad I could scream",feeling_angry,rage,5
+"I have no friends to talk to",feeling_lonely,isolation,5
+"I'm completely burned out",stress,exhaustion,6
+"Hey, what's up?",greeting,neutral,1
+"I appreciate your help",gratitude,gratitude,1
+"I don't want to live anymore",crisis,hopelessness,9
+"I'm in a good mood today",positive_feelings,content,1
+"I'm having panic attacks",feeling_anxious,panic,8

@@ -1,0 +1,531 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .report-header {
+        background: linear-gradient(135deg, rgba(12, 36, 68, 0.95) 0%, rgba(8, 25, 49, 0.98) 100%);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+        border: 1px solid rgba(0, 150, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 30, 60, 0.4);
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, rgba(12, 36, 68, 0.9) 0%, rgba(8, 25, 49, 0.95) 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(0, 150, 255, 0.2);
+        box-shadow: 0 5px 15px rgba(0, 30, 60, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 100, 200, 0.4);
+        border-color: rgba(0, 200, 255, 0.4);
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #00d4ff;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        margin: 10px 0;
+    }
+    
+    .stat-label {
+        color: #b3e0ff;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .chart-container {
+        background: linear-gradient(135deg, rgba(12, 36, 68, 0.95) 0%, rgba(8, 25, 49, 0.98) 100%);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+        border: 1px solid rgba(0, 150, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 30, 60, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .chart-wrapper {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+    
+    .chart-title {
+        color: #00d4ff;
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+    }
+    
+    .insight-card {
+        background: linear-gradient(135deg, rgba(12, 36, 68, 0.9) 0%, rgba(8, 25, 49, 0.95) 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(0, 150, 255, 0.2);
+        box-shadow: 0 5px 15px rgba(0, 30, 60, 0.3);
+    }
+    
+    .insight-icon {
+        font-size: 1.5rem;
+        margin-right: 15px;
+        color: #00d4ff;
+        text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+    }
+    
+    .date-range {
+        color: #b3e0ff;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    
+    .btn-download {
+        background: linear-gradient(135deg, #0066cc, #004499);
+        border: none;
+        border-radius: 8px;
+        padding: 8px 20px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-download:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
+    }
+    
+    .no-data {
+        text-align: center;
+        padding: 60px 40px;
+        color: #b3e0ff;
+    }
+    
+    .no-data i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: #00d4ff;
+    }
+    
+    .risk-indicator {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    
+    .risk-low {
+        background: rgba(0, 255, 0, 0.1);
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        color: #00ff00;
+    }
+    
+    .risk-medium {
+        background: rgba(255, 165, 0, 0.1);
+        border: 1px solid rgba(255, 165, 0, 0.3);
+        color: #ffa500;
+    }
+    
+    .risk-high {
+        background: rgba(255, 0, 0, 0.1);
+        border: 1px solid rgba(255, 0, 0, 0.3);
+        color: #ff4444;
+    }
+</style>
+
+<div class="report-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="text-light mb-2"><i class="fas fa-chart-line me-2"></i>Weekly Mental Wellness Report</h3>
+            <p class="date-range"><i class="far fa-calendar me-2"></i>From {{ week_start }} to {{ week_end }}</p>
+        </div>
+        <button class="btn btn-download">
+            <i class="fas fa-download me-2"></i>Export Report
+        </button>
+    </div>
+</div>
+
+{% if has_data %}
+<div class="row">
+    <!-- Statistics Cards -->
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <div class="stat-label">Total Conversations</div>
+            <div class="stat-value" id="total-chats">{{ total_chats }}</div>
+            <div class="text-muted small">This week</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <div class="stat-label">Avg. Sentiment</div>
+            <div class="stat-value" id="avg-sentiment">{{ average_sentiment }}</div>
+            <div class="text-muted small">
+                {% if average_sentiment > 0.3 %}
+                Positive
+                {% elif average_sentiment < -0.3 %}
+                Concerned
+                {% else %}
+                Neutral
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <div class="stat-label">Risk Level</div>
+            <div class="stat-value" id="avg-risk">{{ average_risk|floatformat:1 }}</div>
+            <div class="risk-indicator 
+                {% if average_risk >= 7 %}risk-high
+                {% elif average_risk >= 4 %}risk-medium
+                {% else %}risk-low{% endif %}">
+                {{ risk_trend|title }}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <div class="stat-label">Dominant Emotion</div>
+            <div class="stat-value" id="dominant-emotion">{{ dominant_emotion|title }}</div>
+            <div class="text-muted small">Most frequent</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Mood Trend Chart -->
+    <div class="col-md-8">
+        <div class="chart-container">
+            <h5 class="chart-title"><i class="fas fa-heartbeat me-2"></i>Weekly Activity & Sentiment</h5>
+            <div class="chart-wrapper">
+                <canvas id="activityChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Risk Distribution -->
+    <div class="col-md-4">
+        <div class="chart-container">
+            <h5 class="chart-title"><i class="fas fa-brain me-2"></i>Risk Level Distribution</h5>
+            <div class="chart-wrapper">
+                <canvas id="riskChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- AI Insights -->
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h5 class="chart-title"><i class="fas fa-lightbulb me-2"></i>Weekly Insights</h5>
+            
+            {% for insight in insights %}
+            <div class="insight-card d-flex align-items-start">
+                <div class="insight-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                    <h6 class="text-light">{{ insight }}</h6>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Recommendations -->
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h5 class="chart-title"><i class="fas fa-hands-helping me-2"></i>Personalized Recommendations</h5>
+            
+            {% for rec in recommendations %}
+            <div class="insight-card d-flex align-items-start">
+                <div class="insight-icon">
+                    {{ rec.icon }}
+                </div>
+                <div>
+                    <h6 class="text-light">{{ rec.title }}</h6>
+                    <p class="text-muted mb-1">{{ rec.description }}</p>
+                    <small class="text-info">{{ rec.reason }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- No Data State -->
+<div class="row">
+    <div class="col-12">
+        <div class="chart-container">
+            <div class="no-data">
+                <i class="fas fa-chart-bar"></i>
+                <h4 class="text-light mb-3">No Data Available for This Week</h4>
+                <p class="text-muted mb-4">Start chatting with MindSight AI to generate your weekly wellness report.</p>
+                <a href="{% url 'chat' %}" class="btn btn-download">
+                    <i class="fas fa-comments me-2"></i>Start Chatting
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    {% if has_data %}
+    // Use REAL data from Django context
+    const weekDays = {{ week_days|safe }};
+    const dailyMessages = {{ daily_messages|safe }};
+    const dailySentiment = {{ daily_sentiment|safe }};
+    const riskData = {{ risk_distribution|safe }};
+
+    console.log('Real data loaded:', {
+        weekDays: weekDays,
+        dailyMessages: dailyMessages,
+        dailySentiment: dailySentiment,
+        riskData: riskData
+    });
+
+    // Check if canvas elements exist
+    const activityCanvas = document.getElementById('activityChart');
+    const riskCanvas = document.getElementById('riskChart');
+
+    if (!activityCanvas) {
+        console.error('Activity chart canvas not found');
+        return;
+    }
+    if (!riskCanvas) {
+        console.error('Risk chart canvas not found');
+        return;
+    }
+
+    // Activity & Sentiment Chart with REAL data
+    try {
+        const activityCtx = activityCanvas.getContext('2d');
+        const activityChart = new Chart(activityCtx, {
+            type: 'bar',
+            data: {
+                labels: weekDays,
+                datasets: [
+                    {
+                        label: 'Messages',
+                        data: dailyMessages,
+                        backgroundColor: 'rgba(0, 212, 255, 0.6)',
+                        borderColor: 'rgba(0, 212, 255, 1)',
+                        borderWidth: 2,
+                        yAxisID: 'y',
+                        barPercentage: 0.6,
+                    },
+                    {
+                        label: 'Sentiment',
+                        data: dailySentiment,
+                        type: 'line',
+                        borderColor: 'rgba(156, 39, 176, 1)',
+                        backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y1',
+                        pointBackgroundColor: 'rgba(156, 39, 176, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#b3e0ff',
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(12, 36, 68, 0.95)',
+                        titleColor: '#00d4ff',
+                        bodyColor: '#b3e0ff',
+                        borderColor: 'rgba(0, 150, 255, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        boxPadding: 6,
+                        usePointStyle: true,
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { 
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            drawBorder: false,
+                        },
+                        ticks: { 
+                            color: '#b3e0ff',
+                            font: { size: 11 }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        position: 'left',
+                        grid: { 
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            drawBorder: false,
+                        },
+                        ticks: { 
+                            color: '#b3e0ff',
+                            font: { size: 11 },
+                            stepSize: 1
+                        },
+                        title: {
+                            display: true,
+                            text: 'Messages',
+                            color: '#b3e0ff',
+                            font: { size: 12, weight: 'bold' }
+                        }
+                    },
+                    y1: {
+                        beginAtZero: false,
+                        position: 'right',
+                        min: -1,
+                        max: 1,
+                        grid: { 
+                            drawOnChartArea: false,
+                            drawBorder: false,
+                        },
+                        ticks: { 
+                            color: '#b3e0ff',
+                            font: { size: 11 },
+                            callback: function(value) {
+                                return value.toFixed(1);
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Sentiment',
+                            color: '#b3e0ff',
+                            font: { size: 12, weight: 'bold' }
+                        }
+                    }
+                }
+            }
+        });
+        console.log('Activity chart created successfully');
+    } catch (error) {
+        console.error('Error creating activity chart:', error);
+    }
+
+    // Risk Distribution Chart with REAL data
+    try {
+        const riskCtx = riskCanvas.getContext('2d');
+        const riskChart = new Chart(riskCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Low', 'Medium', 'High'],
+                datasets: [{
+                    data: riskData,
+                    backgroundColor: [
+                        'rgba(76, 175, 80, 0.9)',    // Green for low
+                        'rgba(255, 152, 0, 0.9)',    // Orange for medium
+                        'rgba(244, 67, 54, 0.9)'     // Red for high
+                    ],
+                    borderColor: [
+                        'rgba(76, 175, 80, 1)',
+                        'rgba(255, 152, 0, 1)',
+                        'rgba(244, 67, 54, 1)'
+                    ],
+                    borderWidth: 3,
+                    hoverOffset: 20,
+                    hoverBorderWidth: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#b3e0ff',
+                            font: { size: 12 },
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            boxWidth: 12,
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(12, 36, 68, 0.95)',
+                        titleColor: '#00d4ff',
+                        bodyColor: '#b3e0ff',
+                        borderColor: 'rgba(0, 150, 255, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                },
+                cutout: '65%',
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        });
+        console.log('Risk chart created successfully');
+    } catch (error) {
+        console.error('Error creating risk chart:', error);
+    }
+
+    // Animate statistics
+    function animateValue(id, start, end, duration) {
+        const obj = document.getElementById(id);
+        if (!obj) return;
+        
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const value = Math.floor(progress * (end - start) + start);
+            obj.innerHTML = value;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    // Animate the statistics
+    setTimeout(() => {
+        animateValue('total-chats', 0, {{ total_chats }}, 1500);
+    }, 500);
+    {% endif %}
+
+    // Export functionality
+    document.querySelector('.btn-download')?.addEventListener('click', function() {
+        alert('Report export functionality would generate a PDF in a production environment.');
+    });
+});
+</script>
+
+{% endblock %}

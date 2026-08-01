@@ -1,0 +1,78 @@
+/* ------------------- Navbar Styles ------------------- */
+
+/* Curved rectangle navbar */
+.custom-navbar {
+  background-color: #001f3f !important; /* deep blue */
+  border-radius: 20px; /* curved ends */
+  margin: 10px; /* spacing from edges */
+  padding: 0.5rem 1rem; /* vertical + horizontal padding */
+  box-shadow: 0 0 25px rgba(17, 70, 107, 0.6); /* subtle glow */
+}
+
+/* Ensure inner container respects rounded edges */
+.custom-navbar .container-fluid {
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+/* Navbar brand with neon glow */
+.navbar-brand {
+  color: #00ffff !important;
+  font-weight: 700;
+  text-shadow: 0 0 5px #00ffff, 0 0 15px #00ffff, 0 0 30px #00ffff;
+  transition: all 0.3s ease;
+}
+
+/* Navbar links with neon glow */
+.navbar-nav .nav-link {
+  color: #00ffff !important; /* neon cyan default */
+  font-weight: 600;
+  text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for links */
+.navbar-nav .nav-link:hover {
+  color: #ffffff !important;
+  text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff;
+  transform: scale(1.05);
+}
+
+/* Optional: different neon colors for specific pages */
+.navbar-nav .nav-link[href*="dashboard"] { color: #00ffff !important; } /* cyan */
+.navbar-nav .nav-link[href*="chat"] { color: #39ff14 !important; }      /* neon green */
+.navbar-nav .nav-link[href*="history"] { color: #ffae00 !important; }   /* neon yellow */
+.navbar-nav .nav-link[href*="weekly_report"] { color: #ff00ff !important; } /* magenta */
+
+/* Logout button hover */
+.nav-item a[href*="logout"]:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+/* ------------------- Body & Other Elements ------------------- */
+body {
+  background: #f7f9fc;
+}
+
+.jumbotron {
+  background: linear-gradient(90deg,#f8f9fa,#eef2f7);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+#chat-window {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 10px;
+}
+#chat-window .user-message {
+  background: #d1e7dd;
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  text-align: right;
+}

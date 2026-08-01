@@ -1,0 +1,464 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="quiz-header">
+        <h2 class="quiz-title">Mental Health Self-Assessment</h2>
+        <p class="quiz-subtitle">Take a moment to check in with yourself</p>
+    </div>
+    
+    <div class="faq-quiz-section">
+        <div id="quiz-container">
+            <!-- Quiz questions will be dynamically inserted here -->
+        </div>
+        
+        <div id="quiz-results" class="quiz-results" style="display: none;">
+            <h3 class="result-title">Assessment Complete</h3>
+            <div class="result-score">
+                <span id="final-score">0</span>/30
+            </div>
+            
+            <div class="severity-indicator">
+                <div class="severity-marker" id="severity-marker"></div>
+            </div>
+            <div class="severity-labels">
+                <span>Minimal</span>
+                <span>Mild</span>
+                <span>Moderate</span>
+                <span>Significant</span>
+            </div>
+            
+            <p class="result-message" id="result-message"></p>
+            <button class="restart-btn" id="restart-btn">Take Assessment Again</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Specific styling for the quiz only */
+    .quiz-container {
+        max-width: 800px;
+        width: 100%;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(156, 147, 233, 0.14);
+        overflow: hidden;
+        margin: 20px auto;
+    }
+    
+    .quiz-header {
+        background: linear-gradient(to right, #6b46c1, #805ad5);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+    
+    .quiz-title {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .quiz-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+    }
+    
+    .faq-quiz-section {
+        padding: 0;
+    }
+    
+    .quiz-question {
+        padding: 30px;
+        border-bottom: 1px solid #eaeaea;
+    }
+    
+    .question-text {
+        font-size: 20px;
+        color: #e23c8aff;
+        margin-bottom: 25px;
+        line-height: 1.5;
+    }
+    
+    .quiz-option {
+        background: rgba(45, 55, 72, 0.8);
+        border: 2px solid #4a5568;
+        color: #e2e8f0;
+    }
+
+    .quiz-option:hover {
+        background: rgba(56, 178, 172, 0.1);
+        border-color: #38b2ac;
+        box-shadow: 0 0 15px rgba(56, 178, 172, 0.4);
+    }
+
+    .quiz-option.selected {
+        background: rgba(56, 178, 172, 0.2);
+        border-color: #38b2ac;
+        box-shadow: 0 0 25px rgba(56, 178, 172, 0.8);
+    }
+    
+    .quiz-navigation {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 30px;
+    }
+    
+    .quiz-btn {
+        padding: 12px 25px;
+        background-color: #805ad5;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    
+    .quiz-btn:hover:not(:disabled) {
+        background-color: #6b46c1;
+    }
+    
+    .quiz-btn:disabled {
+        background-color: #a0aec0;
+        cursor: not-allowed;
+    }
+    
+    .quiz-progress {
+        text-align: center;
+        padding: 20px;
+        color: #e2e8f0;
+        font-size: 16px;
+        font-weight: 600;
+        background: rgba(39, 11, 104, 0.9);
+        border-top: 1px solid #4a5568;
+        margin-top: 10px;
+    }
+    
+    .quiz-results {
+        padding: 40px 30px;
+        text-align: center;
+    }
+    
+    .result-title {
+        color: #10af58ff;
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+    
+    .result-score {
+        font-size: 48px;
+        font-weight: 700;
+        color: #6f37f3ff;
+        margin-bottom: 25px;
+    }
+    
+    .result-message {
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        color: #555;
+        text-align: left;
+        background-color: #6aa8e6ff;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    
+    .restart-btn {
+        padding: 15px 30px;
+        background-color: #805ad5;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+    
+    .restart-btn:hover {
+        background-color: #6b46c1;
+    }
+    
+    .severity-indicator {
+        height: 12px;
+        border-radius: 6px;
+        margin: 20px 0;
+        background: linear-gradient(to right, #4CAF50, #FFC107, #FF9800, #F44336);
+        position: relative;
+    }
+    
+    .severity-marker {
+        height: 24px;
+        width: 24px;
+        background-color: #805ad5;
+        border-radius: 50%;
+        position: absolute;
+        top: -6px;
+        left: 0%;
+        transition: left 0.5s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .severity-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #666;
+    }
+    
+    @media (max-width: 600px) {
+        .quiz-navigation {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .quiz-btn {
+            width: 100%;
+        }
+        
+        .question-text {
+            font-size: 18px;
+        }
+        
+        .quiz-container {
+            margin: 10px;
+        }
+    }
+</style>
+
+<script>
+    // Mental health assessment questions
+    const quizQuestions = [
+        {
+            question: "Over the past 2 weeks, how often have you felt down, depressed, or hopeless?",
+            options: [
+                "Not at all",
+                "Several days",
+                "More than half the days",
+                "Nearly every day"
+            ],
+            scores: [0, 1, 2, 3]
+        },
+        {
+            question: "How often have you had little interest or pleasure in doing things?",
+            options: [
+                "Not at all",
+                "Several days",
+                "More than half the days",
+                "Nearly every day"
+            ],
+            scores: [0, 1, 2, 3]
+        },
+        {
+            question: "How is your sleep quality?",
+            options: [
+                "I sleep well and feel rested",
+                "I sometimes have trouble sleeping",
+                "I frequently have trouble falling or staying asleep",
+                "I almost always have sleep problems"
+            ],
+            scores: [0, 1, 2, 3]
+        },
+        {
+            question: "How would you describe your appetite recently?",
+            options: [
+                "Normal",
+                "Slightly increased or decreased",
+                "Significantly increased or decreased",
+                "I've lost all interest in food or can't stop eating"
+            ],
+            scores: [0, 1, 2, 3]
+        },
+        {
+            question: "How often do you feel tired or have little energy?",
+            options: [
+                "Not at all",
+                "Several days",
+                "More than half the days",
+                "Nearly every day"
+            ],
+            scores: [0, 1, 2, 3]
+        },
+        {
+            question: "How would you rate your ability to concentrate?",
+            options: [
+                "No problems concentrating",
+                "Mild difficulty focusing",
+                "Moderate difficulty focusing",
+                "Severe difficulty focusing"
+            ],
+            scores: [0, 1, 2, 3]
+        },
+        {
+            question: "How often do you feel nervous, anxious, or on edge?",
+            options: [
+                "Not at all",
+                "Several days",
+                "More than half the days",
+                "Nearly every day"
+            ],
+            scores: [0, 1, 2, 3]
+        },
+        {
+            question: "How often do you feel unable to stop or control worrying?",
+            options: [
+                "Not at all",
+                "Several days",
+                "More than half the days",
+                "Nearly every day"
+            ],
+            scores: [0, 1, 2, 3]
+        },
+        {
+            question: "How would you describe your stress levels recently?",
+            options: [
+                "Minimal stress",
+                "Moderate stress that I can manage",
+                "High stress that's difficult to manage",
+                "Overwhelming stress that feels unmanageable"
+            ],
+            scores: [0, 1, 2, 3]
+        },
+        {
+            question: "How connected do you feel to others?",
+            options: [
+                "I feel well-connected and supported",
+                "I sometimes feel isolated",
+                "I often feel lonely or disconnected",
+                "I feel completely isolated from others"
+            ],
+            scores: [0, 1, 2, 3]
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    // Initialize the quiz
+    function initializeQuiz() {
+        currentQuestion = 0;
+        score = 0;
+        userAnswers = [];
+        document.getElementById('quiz-results').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        showQuestion();
+    }
+
+    // Display current question
+    function showQuestion() {
+        const quizContainer = document.getElementById('quiz-container');
+        const question = quizQuestions[currentQuestion];
+        
+        let optionsHtml = '';
+        question.options.forEach((option, index) => {
+            optionsHtml += `
+                <div class="quiz-option" onclick="selectOption(${index})">
+                    ${option}
+                </div>
+            `;
+        });
+        
+        quizContainer.innerHTML = `
+            <div class="quiz-question">
+                <h4 class="question-text">${currentQuestion + 1}. ${question.question}</h4>
+                <div class="quiz-options">
+                    ${optionsHtml}
+                </div>
+            </div>
+            <div class="quiz-navigation">
+                <button class="quiz-btn" id="prev-btn" ${currentQuestion === 0 ? 'disabled' : ''} onclick="previousQuestion()">Previous</button>
+                <button class="quiz-btn" id="next-btn" ${currentQuestion === quizQuestions.length - 1 ? 'onclick="submitQuiz()"' : 'onclick="nextQuestion()"'}">
+                    ${currentQuestion === quizQuestions.length - 1 ? 'See Results' : 'Next Question'}
+                </button>
+            </div>
+            <div class="quiz-progress">
+                Question ${currentQuestion + 1} of ${quizQuestions.length}
+            </div>
+        `;
+        
+        // If user has already answered this question, show their selection
+        if (userAnswers[currentQuestion] !== undefined) {
+            const options = document.querySelectorAll('.quiz-option');
+            options[userAnswers[currentQuestion]].classList.add('selected');
+        }
+    }
+
+    // Select an option
+    function selectOption(optionIndex) {
+        const options = document.querySelectorAll('.quiz-option');
+        options.forEach(option => option.classList.remove('selected'));
+        options[optionIndex].classList.add('selected');
+        userAnswers[currentQuestion] = optionIndex;
+    }
+
+    // Move to next question
+    function nextQuestion() {
+        if (userAnswers[currentQuestion] === undefined) {
+            alert('Please select an answer before proceeding.');
+            return;
+        }
+        
+        currentQuestion++;
+        showQuestion();
+    }
+
+    // Move to previous question
+    function previousQuestion() {
+        currentQuestion--;
+        showQuestion();
+    }
+
+    // Submit the quiz and show results
+    function submitQuiz() {
+        if (userAnswers[currentQuestion] === undefined) {
+            alert('Please select an answer before submitting.');
+            return;
+        }
+        
+        // Calculate score
+        score = 0;
+        quizQuestions.forEach((question, index) => {
+            if (userAnswers[index] !== undefined) {
+                score += question.scores[userAnswers[index]];
+            }
+        });
+        
+        // Display results
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('quiz-results').style.display = 'block';
+        document.getElementById('final-score').textContent = score;
+        
+        // Update severity marker position
+        const marker = document.getElementById('severity-marker');
+        const position = (score / 30) * 100;
+        marker.style.left = `${position}%`;
+        
+        // Custom message based on score
+        const resultMessage = document.getElementById('result-message');
+        
+        if (score <= 5) {
+            resultMessage.textContent = 'Your responses suggest minimal mental health concerns. You appear to be managing well, but remember that everyone can benefit from mental health practices. Consider maintaining your wellbeing with regular self-care activities like exercise, proper sleep, and social connection.';
+        } else if (score <= 10) {
+            resultMessage.textContent = 'Your responses suggest mild mental health concerns. You might be experiencing some challenges, but they appear manageable. Consider incorporating stress-reduction techniques into your routine, such as mindfulness, regular breaks, and setting healthy boundaries. Monitor how you feel over the coming weeks.';
+        } else if (score <= 20) {
+            resultMessage.textContent = 'Your responses suggest moderate mental health concerns that may be impacting your daily life. It might be helpful to speak with a mental health professional who can provide support and guidance tailored to your needs. In the meantime, prioritize self-care and consider reaching out to trusted friends or family members.';
+        } else {
+            resultMessage.textContent = 'Your responses suggest significant mental health concerns that are likely impacting multiple areas of your life. We strongly encourage you to reach out to a mental health professional for support. Remember that help is available, and you don\'t have to navigate these challenges alone. Taking this step is a sign of strength.';
+        }
+        
+        // Add disclaimer
+        resultMessage.innerHTML += '<br><br><em>Note: This assessment is not a diagnostic tool. It is meant to provide general insights into your mental wellbeing. If you\'re experiencing significant distress, please consult with a qualified mental health professional.</em>';
+    }
+
+    // Initialize the quiz when page loads
+    document.addEventListener('DOMContentLoaded', initializeQuiz);
+    
+    // Restart quiz functionality
+    document.getElementById('restart-btn').addEventListener('click', initializeQuiz);
+</script>
+{% endblock %}

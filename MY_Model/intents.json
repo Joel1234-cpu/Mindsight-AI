@@ -1,0 +1,77 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "Hey",
+        "How are you?",
+        "Is anyone there?",
+        "Hello",
+        "Good day",
+        "hi there",
+        "hello there",
+        "greetings",
+        "good morning",
+        "good evening"
+      ],
+      "responses": [
+        "Hey :-)",
+        "Hello, thanks for visiting",
+        "Hi there, what can I do for you?",
+        "Hi there, how can I help?"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["Bye", "See you later", "Goodbye"],
+      "responses": [
+        "See you later, thanks for visiting",
+        "Have a nice day",
+        "Bye! Come back again soon."
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": ["Thanks", "Thank you", "That's helpful", "Thank's a lot!"],
+      "responses": ["Happy to help!", "Any time!", "My pleasure"]
+    },
+    {
+      "tag": "about",
+      "patterns": [
+        "Who are you?",
+        "What are you?",
+        "Who you are?"
+      ],
+      "responses": [
+        "I am a chatbot created with Python and scikit-learn.",
+        "I'm a bot, ready to assist you."
+      ]
+    },
+    {
+      "tag": "help",
+      "patterns": [
+        "Could you help me?",
+        "give me a hand",
+        "Can you help?",
+        "What can you do?"
+      ],
+      "responses": [
+        "I can answer basic questions. Try asking me who I am!",
+        "You can ask me simple questions."
+      ]
+    },
+    {
+      "tag": "funny",
+      "patterns": [
+        "Tell me a joke!",
+        "Tell me something funny!",
+        "Do you know a joke?"
+      ],
+      "responses": [
+        "Why did the scarecrow win an award? Because he was outstanding in his field.",
+        "What do you call a fake noodle? An Impasta."
+      ]
+    }
+  ]
+}

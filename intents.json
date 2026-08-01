@@ -1,0 +1,39 @@
+{
+    "intents": [
+        {
+            "tag": "greeting",
+            "patterns": ["hi", "hello", "hey", "good morning", "good evening", "hi there"],
+            "responses": ["Hello! How are you feeling today?", "Hi there! How can I help you?", "Hello! Would you like to talk about something?"]
+        },
+        {
+            "tag": "goodbye",
+            "patterns": ["bye", "goodbye", "see you", "take care"],
+            "responses": ["Goodbye! Take care!", "Have a great day!", "See you next time!"]
+        },
+        {
+            "tag": "thanks",
+            "patterns": ["thanks", "thank you", "appreciate it"],
+            "responses": ["You're welcome!", "Happy to help!", "Anytime!"]
+        },
+        {
+            "tag": "feeling_good",
+            "patterns": ["I'm good", "feeling great", "doing well", "happy", "great"],
+            "responses": ["That's wonderful to hear!", "I'm glad you're feeling good!", "Great to know you're doing well!"]
+        },
+        {
+            "tag": "feeling_bad",
+            "patterns": ["I'm sad", "feeling down", "depressed", "not good", "upset"],
+            "responses": ["I'm sorry you're feeling this way. Would you like to talk about it?", "It's okay to feel down sometimes. Want to share what's bothering you?", "I'm here to listen if you want to talk about what's troubling you."]
+        },
+        {
+            "tag": "anxiety",
+            "patterns": ["I'm anxious", "feeling nervous", "worried", "stressed", "anxiety"],
+            "responses": ["Take a deep breath. Can you tell me what's making you feel anxious?", "Anxiety can be overwhelming. Would you like to talk about what's causing it?", "I'm here to help you work through your anxiety. What's on your mind?"]
+        },
+        {
+            "tag": "default",
+            "patterns": [],
+            "responses": ["I'm here to listen. Could you tell me more about that?", "Please feel free to share more.", "I'm listening. Would you like to elaborate?"]
+        }
+    ]
+}

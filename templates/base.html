@@ -1,0 +1,779 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MindSight AI</title>
+
+    <link rel="icon" type="image/png" href="https://img.freepik.com/free-vector/chatbot-chat-message-vectorart_78370-4104.jpg?semt=ais_hybrid&w=740&q=80"> 
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Your custom CSS -->
+    {% load static %}
+    <link href="{% static 'css/main.css' %}" rel="stylesheet"> 
+    
+    <!-- Additional CSS for enhanced navbar and footer -->
+    <style>
+        /* Enhanced Navbar Styles */
+        .custom-navbar {
+            background: linear-gradient(135deg, #001f3f 0%, #003366 100%) !important;
+            border-radius: 25px !important;
+            margin: 15px;
+            padding: 0.5rem 1.5rem;
+            box-shadow: 0 0 25px rgba(0, 247, 255, 0.7), 
+                        0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 247, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Animated background effect */
+        .custom-navbar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                        transparent, 
+                        rgba(0, 247, 255, 0.1), 
+                        transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .custom-navbar:hover::before {
+            left: 100%;
+        }
+        
+        /* Ensure inner container respects rounded edges */
+        .custom-navbar .container-fluid {
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        /* Enhanced Navbar brand with neon glow */
+        .navbar-brand {
+            color: #00ffff !important;
+            font-weight: 800;
+            font-size: 1.8rem;
+            text-shadow: 0 0 5px #00ffff, 0 0 15px #00ffff, 0 0 30px #00ffff;
+            transition: all 0.4s ease;
+            padding: 5px 15px;
+            border-radius: 12px;
+            background: rgba(0, 31, 63, 0.5);
+            border: 1px solid rgba(0, 247, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .navbar-brand:hover {
+            text-shadow: 0 0 10px #00ffff, 0 0 25px #00ffff, 0 0 50px #00ffff;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(48, 215, 221, 0.6);
+        }
+        
+        /* Enhanced Navbar links with neon glow */
+        .navbar-nav .nav-link {
+            color: #00ffff !important;
+            font-weight: 600;
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+            transition: all 0.3s ease;
+            margin: 0 5px;
+            padding: 8px 15px !important;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Animated underline effect */
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #00ffff;
+            box-shadow: 0 0 8px #00ffff;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+        }
+        
+        /* Hover effect for links */
+        .navbar-nav .nav-link:hover {
+            color: #ffffff !important;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff;
+            transform: translateY(-2px);
+            background: rgba(0, 247, 255, 0.1);
+        }
+        
+        /* Custom navbar toggler */
+        .navbar-toggler {
+            border: 1px solid rgba(0, 247, 255, 0.5);
+            box-shadow: 0 0 8px rgba(0, 247, 255, 0.5);
+        }
+        
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 247, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        
+        /* Specific colors for different pages with enhanced glow */
+        .navbar-nav .nav-link[href*="dashboard"] { 
+            color: #00ffff !important; 
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+        }
+        .navbar-nav .nav-link[href*="chat"] { 
+            color: #39ff14 !important;
+            text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14;
+        }
+        .navbar-nav .nav-link[href*="history"] { 
+            color: #ffae00 !important;
+            text-shadow: 0 0 5px #ffae00, 0 0 10px #ffae00;
+        }
+        .navbar-nav .nav-link[href*="weekly_report"] { 
+            color: #ff00ff !important;
+            text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff;
+        }
+        .navbar-nav .nav-link[href*="faq_quiz"] { 
+            color: #ff6b35 !important;
+            text-shadow: 0 0 5px #ff6b35, 0 0 10px #ff6b35;
+        }
+        .navbar-nav .nav-link[href*="research_paper"] { 
+            color: #9d4edd !important;
+            text-shadow: 0 0 5px #9d4edd, 0 0 10px #9d4edd;
+        }
+        
+        /* Enhanced Logout button */
+        .nav-item a[href*="logout"] {
+            color: #ff6b6b !important;
+            text-shadow: 0 0 5px #ff6b6b, 0 0 10px #ff6b6b;
+        }
+        
+        .nav-item a[href*="logout"]:hover {
+            background-color: rgba(220, 53, 69, 0.2) !important;
+            color: #ff6b6b !important;
+            border-radius: 10px;
+            text-shadow: 0 0 10px #ff6b6b, 0 0 20px #ff6b6b;
+        }
+        
+        /* Optimized Professional Footer Styles */
+        .professional-footer {
+            background: linear-gradient(135deg, #00264d 0%, #003366 100%) !important;
+            border-top: 3px solid rgba(0, 247, 255, 0.6) !important;
+            box-shadow: 0 -10px 30px rgba(0, 100, 255, 0.8) !important;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .footer-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                        transparent, 
+                        #00ffff, 
+                        #00ffaa, 
+                        #00ffff, 
+                        transparent) !important;
+            box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffaa !important;
+            animation: scanLine 3s linear infinite;
+        }
+
+        .footer-section {
+            padding: 40px 0 !important;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-heading {
+            color: #00ffff !important;
+            font-weight: 700 !important;
+            margin-bottom: 20px !important;
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.8) !important;
+            position: relative;
+            display: inline-block;
+            font-size: 1.3rem !important;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #00ffff;
+            box-shadow: 0 0 12px #00ffff !important;
+            animation: pulse 2s infinite;
+        }
+
+        .footer-links a {
+            color: #e6f7ff !important;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 12px !important;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 20px !important;
+            font-size: 1rem !important;
+            font-weight: 500;
+        }
+
+        .footer-links a::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #00ffff;
+            text-shadow: 0 0 8px #00ffff;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff !important;
+            text-shadow: 0 0 12px #00ffff !important;
+            transform: translateX(8px) !important;
+        }
+
+        .footer-links a:hover::before {
+            transform: scale(1.3) !important;
+            color: #00ffaa !important;
+        }
+
+        .footer-text {
+            color: #e6f7ff !important;
+            line-height: 1.7;
+            font-size: 1rem !important;
+            font-weight: 400;
+        }
+
+        /* Add these animations */
+        @keyframes scanLine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 12px #00ffff;
+            }
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 20px #00ffff;
+            }
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0, 247, 255, 0.1);
+            border: 1px solid rgba(0, 247, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00ffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.2);
+            font-size: 0.9rem;
+        }
+        
+        .social-icon:hover {
+            background: rgba(0, 247, 255, 0.2);
+            color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.4);
+        }
+        
+        /* FAQ Quiz Section */
+        .faq-quiz-section {
+            background: rgba(0, 26, 51, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid rgba(0, 247, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 30, 60, 0.4);
+        }
+        
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .quiz-title {
+            color: #00ffff;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            margin-bottom: 10px;
+        }
+        
+        .quiz-progress {
+            color: #b3e0ff;
+            font-size: 0.9rem;
+        }
+        
+        .quiz-question {
+            background: rgba(0, 40, 80, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 247, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 30, 60, 0.3);
+        }
+        
+        .question-text {
+            color: #00ffff;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .quiz-option {
+            background: rgba(0, 60, 120, 0.3);
+            border: 1px solid rgba(0, 247, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: #e6f7ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quiz-option:hover {
+            background: rgba(0, 80, 160, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+        }
+        
+        .quiz-option.selected {
+            background: rgba(0, 100, 200, 0.5);
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.5);
+        }
+        
+        .quiz-option.correct {
+            background: rgba(0, 200, 100, 0.4);
+            border-color: #00ffaa;
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.5);
+        }
+        
+        .quiz-option.incorrect {
+            background: rgba(200, 0, 50, 0.4);
+            border-color: #ff6b6b;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+        }
+        
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        .quiz-btn {
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 100, 255, 0.5);
+        }
+        
+        .quiz-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0, 100, 255, 0.7);
+        }
+        
+        .quiz-btn:disabled {
+            background: rgba(100, 100, 100, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .quiz-results {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0, 40, 80, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 247, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 30, 60, 0.4);
+        }
+        
+        .result-title {
+            color: #00ffff;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+        
+        .result-score {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #00ffaa;
+            text-shadow: 0 0 15px rgba(0, 255, 170, 0.7);
+            margin: 15px 0;
+        }
+        
+        .result-message {
+            color: #e6f7ff;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, #00cc66 0%, #00994d 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 200, 100, 0.5);
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0, 200, 100, 0.7);
+        }
+        
+        .footer-bottom {
+            background: linear-gradient(135deg, #00264d 0%, #003366 100%) !important;
+            border-top: 3px solid rgba(0, 247, 255, 0.8) !important;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            padding: 25px 0 !important;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 -10px 40px rgba(0, 150, 255, 0.8) !important;
+            margin-top: 20px;
+        }
+
+        .footer-bottom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                        transparent, 
+                        #00ffff, 
+                        #00ffaa, 
+                        #00ffff, 
+                        transparent);
+            box-shadow: 0 0 20px #00ffff;
+            animation: scanLine 3s linear infinite;
+        }
+
+        .footer-copyright {
+            margin: 0 0 15px 0 !important;
+            font-size: 1.3rem !important;
+            color: #ffffff !important;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff !important;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .brand-name {
+            color: #00ffff !important;
+            text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff !important;
+            font-weight: 700;
+        }
+
+        .heart {
+            animation: heartbeat 1.5s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        .team-names {
+            color: #00ffaa !important;
+            text-shadow: 0 0 10px #00ffaa, 0 0 20px #00ffaa !important;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .team-names:hover {
+            color: #ffffff !important;
+            text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff !important;
+            transform: scale(1.05);
+        }
+
+        .footer-support {
+            margin: 0 !important;
+            font-size: 1.2rem !important;
+            color: #e6f7ff !important;
+            text-shadow: 0 0 8px #00bfff, 0 0 16px #33ccff !important;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .support-number {
+            color: #00ffff !important;
+            text-shadow: 0 0 12px #00ffff, 0 0 24px #00ffff !important;
+            font-weight: 600;
+        }
+
+        /* Add these missing animations */
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+        
+        .mental-health-message {
+            background: linear-gradient(135deg, rgba(0, 40, 85, 0.8) 0%, rgba(0, 60, 120, 0.9) 100%);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 3px solid #00ffff;
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+        }
+        
+        .message-icon {
+            color: #00ffff;
+            font-size: 1.2rem;
+            margin-right: 12px;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        }
+        
+        .mental-health-message h5 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .mental-health-message p {
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 991px) {
+            .custom-navbar {
+                margin: 10px;
+                border-radius: 15px !important;
+            }
+            
+            .navbar-nav .nav-link {
+                margin: 5px 0;
+                text-align: center;
+            }
+            
+            .footer-section {
+                text-align: center;
+                padding: 20px 0;
+            }
+            
+            .footer-heading::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .professional-footer {
+                margin-top: 20px;
+            }
+            
+            .quiz-navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .quiz-btn {
+                width: 100%;
+            }
+        }
+        
+        /* Extra small devices */
+        @media (max-width: 576px) {
+            .footer-section {
+                padding: 15px 0;
+            }
+            
+            .mental-health-message {
+                padding: 12px;
+                margin: 10px 0;
+            }
+            
+            .faq-quiz-section {
+                padding: 15px;
+                margin: 10px 0;
+            }
+        }
+    </style>
+  </head>
+
+  <body style="background-image: url('https://plus.unsplash.com/premium_photo-1701760184917-38e25718ee3e?q=80&w=1032&auto=format&fit=crop'); background-size: cover; background-attachment: fixed;">
+
+    <!-- Custom Curved Neon Navbar -->
+    <nav class="navbar navbar-expand-lg custom-navbar">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">MindSight AI</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            {% if user.is_authenticated %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'chat' %}">Chat</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'chat_history' %}">History</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'weekly_report' %}">Weekly Report</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'faq_quiz' %}">FAQ Quiz</a></li>
+              <li class="nav-item"><a class="nav-link" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1495268/" target="_blank">Research Paper</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container mt-4">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+
+    <!-- Optimized Professional Footer -->
+    <footer class="professional-footer">
+        <div class="footer-glow"></div>
+        
+        <div class="container">
+            <!-- Mental Health Messages -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="mental-health-message d-flex align-items-center">
+                        <i class="fas fa-heart message-icon"></i>
+                        <div>
+                            <h5 style="color: #00ffff; margin: 0;">Your Mental Health Matters</h5>
+                            <p style="color: #b3e0ff; margin: 0;">Taking care of your mind is just as important as taking care of your body. You're not alone in this journey.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Footer Content -->
+            <div class="row footer-section">
+                <div class="col-md-4 mb-4">
+                    <h4 class="footer-heading">MindSight AI</h4>
+                    <p class="footer-text">
+                        Empowering mental wellness through AI-driven insights and personalized support. 
+                        Our platform provides tools for self-reflection, emotional tracking, and professional guidance.
+                    </p>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="{% url 'dashboard' %}">Dashboard</a>
+                        <a href="{% url 'chat' %}">AI Chat Assistant</a>
+                        <a href="{% url 'weekly_report' %}">Weekly Reports</a>
+                        <a href="{% url 'chat_history' %}">Chat History</a>
+                        <a href="{% url 'faq_quiz' %}">FAQ Quiz</a>
+                        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1495268/" target="_blank">Research Paper</a>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <h4 class="footer-heading">Mental Health Resources</h4>
+                    <div class="footer-text">
+                        <p>If you're experiencing a mental health crisis, please reach out to a professional immediately:</p>
+                        <ul style="color: #b3e0ff; padding-left: 20px;">
+                            <li>National Suicide Prevention Lifeline: 1-800-273-8255</li>
+                            <li>Crisis Text Line: Text HOME to 741741</li>
+                            <li>Emergency: 911</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+       <div class="footer-bottom">
+  <div class="container text-center">
+    <p class="footer-copyright">
+      &copy; 2025 <strong class="brand-name">MindSight AI</strong> | Built with <span class="heart">💙</span> by
+      <span class="team-names">Joel, Divyanshu, Gaurav, Gopal</span>
+    </p>
+    <p class="footer-support">
+      Mental Wellness Support: <strong class="support-number">1-800-273-8255</strong>
+    </p>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Footer Scripts -->
+    <script>
+        // Smooth scroll for footer links
+        document.querySelectorAll('.footer-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+  </body>
+</html>
